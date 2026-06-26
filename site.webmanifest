@@ -1,0 +1,13 @@
+{
+  "name": "大田AIワークス",
+  "short_name": "大田AIワークス",
+  "description": "大田区の中小の「面倒」をAIで消す、地元の実行パートナー",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#0e5b5f",
+  "background_color": "#f4f0e7",
+  "display": "minimal-ui",
+  "start_url": "./"
+}

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI活用診断｜業務を分解して、効くポイントを見つける</title>
+<link rel="icon" type="image/png" href="../assets/logo.png" />
+<style>
+  /* ============================================================
+     AI活用診断シート — 単一HTML・オフライン動作
+     用途: 中小事業者の業務をタスクに細分化 → AI化の優先度を採点
+           → 最初の一手（型商品）を提案 → 1枚サマリーを印刷して手渡す
+     デザイン: 暖色の紙 × 深いペトロール × ヒート(優先度=熱)
+     ============================================================ */
+
+  :root {
+    --paper:      #f4f0e7;
+    --paper-2:    #ebe5d6;
+    --card:       #fbf9f3;
+    --ink:        #1c1f1b;
+    --ink-soft:   #555a51;
+    --ink-faint:  #8a8e83;
+    --line:       #d9d2c1;
+    --line-soft:  #e7e1d3;
+    --petrol:     #0e5b5f;
+    --petrol-deep:#093e41;
+    --petrol-tint:#dfeae8;
+    --ember:      #c4561f;
+    --ember-deep: #9c3f12;
+    --cool:       #6f9b96;
+    --gold:       #b9892f;
+    --shadow:     0 1px 2px rgba(28,31,27,.06), 0 12px 30px -18px rgba(9,62,65,.5);
+
+    --font-serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --font-goth:  "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "YuGothic", "Meiryo", system-ui, sans-serif;
+    --font-mono:  "SFMono-Regular", "SF Mono", "Menlo", "Consolas", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-goth);
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(circle at 12% -10%, rgba(14,91,95,.10), transparent 42%),
+      radial-gradient(circle at 92% 0%, rgba(196,86,31,.08), transparent 38%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: .01em;
+  }
+
+  /* ---------- ヘッダー ---------- */
+  header {
+    border-bottom: 2px solid var(--ink);
+    background: linear-gradient(180deg, rgba(251,249,243,.7), transparent);
+    padding: 22px clamp(18px, 4vw, 56px) 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  .mark-img { width: 48px; height: 48px; flex: none; object-fit: contain; mix-blend-mode: multiply; display:block; }
+  .brand h1 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 30px);
+    margin: 0;
+    letter-spacing: .04em;
+    line-height: 1.1;
+  }
+  .brand .tag {
+    font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; letter-spacing: .02em;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 12px;
+    align-items: center;
+    font-size: 12px;
+  }
+  .meta label { color: var(--ink-faint); white-space: nowrap; letter-spacing:.08em; }
+  .meta input {
+    font-family: var(--font-goth);
+    border: none; border-bottom: 1px solid var(--line);
+    background: transparent; color: var(--ink);
+    padding: 3px 2px; font-size: 13px; min-width: 150px;
+  }
+  .meta input:focus { outline: none; border-bottom-color: var(--petrol); }
+
+  /* ---------- レイアウト ---------- */
+  main {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: clamp(16px, 2.4vw, 34px);
+    padding: clamp(18px, 3vw, 40px) clamp(18px, 4vw, 56px) 80px;
+    max-width: 1480px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
+
+  .panel-title {
+    font-family: var(--font-serif);
+    font-size: 14px; letter-spacing: .16em;
+    color: var(--petrol-deep);
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 0 14px;
+    text-transform: none;
+  }
+  .panel-title::before {
+    content: ""; width: 22px; height: 2px; background: var(--ember); display: inline-block;
+  }
+  .step-no {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ember-deep);
+    border: 1px solid var(--ember); border-radius: 2px; padding: 0 5px; line-height: 1.5;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- 基本情報 ---------- */
+  .basic { padding: 20px 22px; margin-bottom: 22px; }
+  .basic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 20px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 11.5px; color: var(--ink-faint); letter-spacing: .1em; }
+  .field input, .field select {
+    font-family: var(--font-goth); font-size: 14px;
+    border: 1px solid var(--line); border-radius: 3px;
+    background: var(--paper); color: var(--ink);
+    padding: 8px 10px;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--petrol); box-shadow: 0 0 0 3px var(--petrol-tint); }
+  .rate-hint { font-size: 11px; color: var(--ink-faint); }
+
+  /* ---------- タスク棚卸し ---------- */
+  .tasks-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 12px;
+  }
+  .tasks-wrap { padding: 18px 20px 22px; }
+
+  .col-legend {
+    display: grid;
+    grid-template-columns: minmax(0,2.3fr) 1.1fr 1fr .8fr .9fr 1.1fr 30px;
+    gap: 10px;
+    font-size: 10.5px; color: var(--ink-faint); letter-spacing: .06em;
+    padding: 0 4px 8px; border-bottom: 1px solid var(--line-soft);
+  }
+  @media (max-width: 640px) { .col-legend { display: none; } }
+
+  .task-row {
+    display: grid;
+    grid-template-columns: minmax(0,2.3fr) 1.1fr 1fr .8fr .9fr 1.1fr 30px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    animation: rowin .35s ease both;
+  }
+  @keyframes rowin { from { opacity: 0; transform: translateY(-4px); } }
+  @media (max-width: 640px) {
+    .task-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 4px; }
+    .task-row .t-name { grid-column: 1 / -1; }
+    .task-row .t-derived { grid-column: 1 / -1; }
+    .task-row .t-del { position: absolute; right: 6px; }
+  }
+  .task-row input, .task-row select {
+    font-family: var(--font-goth); font-size: 13px;
+    border: 1px solid var(--line); border-radius: 3px;
+    background: var(--paper); color: var(--ink);
+    padding: 7px 8px; width: 100%;
+  }
+  .task-row input:focus, .task-row select:focus { outline: none; border-color: var(--petrol); box-shadow: 0 0 0 2px var(--petrol-tint); }
+  .task-row .t-name input { font-weight: 600; }
+
+  .t-derived { display: flex; flex-direction: column; gap: 3px; }
+  .t-hours { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink); }
+  .t-hours b { font-size: 14px; }
+  .heat {
+    height: 5px; border-radius: 3px; background: var(--line-soft); overflow: hidden; position: relative;
+  }
+  .heat > i {
+    display: block; height: 100%; width: 0%;
+    background: var(--cool);
+    transition: width .5s cubic-bezier(.2,.8,.2,1), background .4s ease;
+  }
+  .t-del {
+    border: none; background: transparent; color: var(--ink-faint);
+    cursor: pointer; font-size: 17px; line-height: 1; padding: 4px; border-radius: 3px;
+    transition: color .15s, background .15s;
+  }
+  .t-del:hover { color: var(--ember-deep); background: rgba(196,86,31,.1); }
+
+  .btn {
+    font-family: var(--font-goth); font-size: 13px; cursor: pointer;
+    border-radius: 3px; padding: 9px 16px; border: 1px solid transparent;
+    transition: transform .08s ease, background .15s, box-shadow .15s; letter-spacing: .03em;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-line { background: var(--card); border-color: var(--petrol); color: var(--petrol-deep); }
+  .btn-line:hover { background: var(--petrol-tint); }
+  .btn-solid { background: var(--petrol); color: #fff; }
+  .btn-solid:hover { background: var(--petrol-deep); box-shadow: 0 6px 18px -8px var(--petrol); }
+  .btn-ghost { background: transparent; border-color: var(--line); color: var(--ink-soft); }
+  .btn-ghost:hover { border-color: var(--ink-soft); }
+  .btn-add { width: 100%; margin-top: 14px; border: 1px dashed var(--petrol); color: var(--petrol-deep); background: transparent; }
+  .btn-add:hover { background: var(--petrol-tint); }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ---------- 診断結果（右） ---------- */
+  .results { position: sticky; top: 18px; }
+  @media (max-width: 1000px) { .results { position: static; } }
+
+  .metrics { padding: 18px 20px 6px; }
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); border-radius: 4px; overflow: hidden; }
+  .metric { background: var(--card); padding: 14px 14px 12px; }
+  .metric .k { font-size: 10.5px; color: var(--ink-faint); letter-spacing: .08em; }
+  .metric .v { font-family: var(--font-mono); font-size: 25px; font-weight: 600; color: var(--petrol-deep); line-height: 1.2; margin-top: 4px; }
+  .metric .v small { font-size: 13px; font-weight: 400; color: var(--ink-soft); margin-left: 2px; }
+  .metric.hot .v { color: var(--ember-deep); }
+
+  .rank { padding: 8px 20px 18px; }
+  .rank ol { list-style: none; margin: 0; padding: 0; }
+  .rank li {
+    display: grid; grid-template-columns: 24px 1fr auto; gap: 10px; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid var(--line-soft);
+  }
+  .rank li:last-child { border-bottom: none; }
+  .rank .pos { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+  .rank li.top1 .pos { color: #fff; background: var(--ember); border-radius: 50%; width: 22px; height: 22px; display: grid; place-items: center; }
+  .rank .rname { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank .rcat { font-size: 10.5px; color: var(--ink-faint); }
+  .rank .rbar { width: 84px; }
+  .rank .rbar .heat { height: 6px; }
+  .rank-empty { color: var(--ink-faint); font-size: 13px; padding: 18px 0; text-align: center; }
+
+  /* ---------- 提案 / 1枚サマリー ---------- */
+  #proposal { margin-top: 22px; padding: 22px 24px 26px; position: relative; overflow: hidden; }
+  #proposal::after {
+    content: ""; position: absolute; top: 0; right: 0; width: 120px; height: 120px;
+    background: radial-gradient(circle at top right, rgba(196,86,31,.12), transparent 70%);
+    pointer-events: none;
+  }
+  .prop-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; color: var(--ember-deep); }
+  .prop-line { font-family: var(--font-serif); font-size: 17px; line-height: 1.75; margin: 10px 0 16px; }
+  .prop-line .hl { color: var(--ember-deep); font-weight: 600; border-bottom: 2px solid rgba(196,86,31,.3); }
+  .prop-line .hlp { color: var(--petrol-deep); font-weight: 600; }
+
+  .offer {
+    border: 1px solid var(--petrol); border-radius: 4px; background: var(--petrol-tint);
+    padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .offer .o-label { font-size: 10.5px; letter-spacing: .1em; color: var(--petrol-deep); }
+  .offer .o-name { font-family: var(--font-serif); font-size: 18px; color: var(--petrol-deep); font-weight: 600; }
+  .offer .o-price { font-family: var(--font-mono); font-size: 15px; color: var(--ink); text-align: right; }
+  .offer.second { background: transparent; border-style: dashed; margin-top: 10px; }
+  .offer.second .o-name, .offer.second .o-label { color: var(--ink-soft); }
+
+  .next-step { margin-top: 16px; font-size: 13px; color: var(--ink-soft); display: flex; gap: 8px; }
+  .next-step b { color: var(--ink); }
+
+  .prop-foot {
+    margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 11px; color: var(--ink-faint);
+  }
+  .prop-foot .pf-brand { font-family: var(--font-serif); color: var(--petrol-deep); font-size: 13px; letter-spacing: .04em; }
+
+  .actions { padding: 14px 4px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .disclaimer { font-size: 10.5px; color: var(--ink-faint); padding: 18px clamp(18px,4vw,56px); max-width: 1480px; margin: 0 auto; }
+
+  /* ---------- 印刷: 提案だけ1枚に ---------- */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff; }
+    header, main > section.workbench, .results > .metrics, .results > .rank,
+    .results .actions, .disclaimer, .col-legend, .tasks-head { display: none !important; }
+    body * { visibility: hidden; }
+    #proposal, #proposal * { visibility: visible; }
+    #proposal {
+      position: absolute; left: 0; top: 0; width: 100%; margin: 0; box-shadow: none;
+      border: none; padding: 0;
+    }
+    #proposal::after { display: none; }
+    .print-only { display: block !important; }
+  }
+  .print-only { display: none; }
+  .print-head { margin-bottom: 14px; }
+  .print-head h2 { font-family: var(--font-serif); font-size: 20px; margin: 0 0 4px; color: var(--ink); }
+  .print-head .ph-sub { font-size: 12px; color: var(--ink-soft); }
+  .print-facts { font-size: 12px; color: var(--ink-soft); margin: 10px 0 4px; display: flex; gap: 18px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img class="mark-img" src="../assets/logo.png" alt="大田AIワークス ロゴ" />
+    <div>
+      <h1>AI活用診断</h1>
+      <div class="tag">業務をタスクに分解して、AIで一番効くポイントを見つける</div>
+    </div>
+  </div>
+  <div class="meta">
+    <label>担当</label><input id="m-staff" type="text" value="大田AIワークス" />
+    <label>診断日</label><input id="m-date" type="text" />
+  </div>
+</header>
+
+<main>
+  <!-- ===================== 左: 入力ワークベンチ ===================== -->
+  <section class="workbench">
+
+    <!-- ① 基本情報 -->
+    <div class="card basic">
+      <h2 class="panel-title"><span class="step-no">01</span>お客様の基本情報</h2>
+      <div class="basic-grid">
+        <div class="field">
+          <label>事業者名（お客様）</label>
+          <input id="b-name" type="text" placeholder="例: ◯◯食堂" />
+        </div>
+        <div class="field">
+          <label>業種</label>
+          <input id="b-industry" type="text" placeholder="例: 飲食店 / 美容室 / 税理士事務所" />
+        </div>
+        <div class="field">
+          <label>スタッフ人数</label>
+          <input id="b-staff" type="text" placeholder="例: 3名" />
+        </div>
+        <div class="field">
+          <label>人件費の目安（時給・円）<span class="rate-hint">削減額の計算に使用</span></label>
+          <input id="b-rate" type="number" value="2500" min="0" step="100" />
+        </div>
+        <div class="field full">
+          <label>一番の困りごと（1行）</label>
+          <input id="b-pain" type="text" placeholder="例: 手が回らず、SNSも事務も後回しになっている" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ② タスク棚卸し -->
+    <div class="card tasks-wrap">
+      <div class="tasks-head">
+        <h2 class="panel-title" style="margin:0;"><span class="step-no">02</span>業務の棚卸し（タスク細分化）</h2>
+        <button class="btn btn-ghost" id="load-sample">飲食店の例を入れる</button>
+      </div>
+
+      <div class="col-legend">
+        <span>タスク（今やっている作業）</span>
+        <span>カテゴリ</span>
+        <span>頻度</span>
+        <span>1回(分)</span>
+        <span>定型度</span>
+        <span>月の時間 / 優先度</span>
+        <span></span>
+      </div>
+
+      <div id="task-list"></div>
+
+      <button class="btn btn-add" id="add-task">＋ タスクを追加</button>
+    </div>
+  </section>
+
+  <!-- ===================== 右: 診断結果 ===================== -->
+  <section class="results">
+
+    <div class="card metrics">
+      <h2 class="panel-title"><span class="step-no">03</span>診断結果</h2>
+      <div class="metric-grid">
+        <div class="metric"><div class="k">棚卸したタスク</div><div class="v"><span id="r-count">0</span><small>件</small></div></div>
+        <div class="metric"><div class="k">月の総作業時間</div><div class="v"><span id="r-total">0</span><small>時間/月</small></div></div>
+        <div class="metric hot"><div class="k">AIで削れる見込み</div><div class="v"><span id="r-save-h">0</span><small>時間/月</small></div></div>
+        <div class="metric hot"><div class="k">削減額の目安</div><div class="v"><small>¥</small><span id="r-save-y">0</span><small>/月</small></div></div>
+      </div>
+    </div>
+
+    <div class="card rank">
+      <h2 class="panel-title"><span class="step-no">04</span>AI化の優先順位</h2>
+      <ol id="rank-list"></ol>
+      <div class="rank-empty" id="rank-empty">タスクを入力すると、効く順に並びます。</div>
+    </div>
+
+    <!-- ⑤ 1枚サマリー / 提案（印刷対象） -->
+    <div class="card" id="proposal">
+      <div class="print-only print-head">
+        <h2>AI活用診断レポート</h2>
+        <div class="ph-sub" id="p-client">お客様: —</div>
+        <div class="print-facts">
+          <span id="p-industry">業種: —</span>
+          <span id="p-date">診断日: —</span>
+        </div>
+      </div>
+
+      <div class="prop-eyebrow">DIAGNOSIS — 最初の一手</div>
+      <p class="prop-line" id="prop-line">
+        タスクを入力すると、ここに「現状 → AIで浮く時間・お金 → 最初の一手」が自動で出ます。
+      </p>
+
+      <div id="offer-zone"></div>
+
+      <div class="next-step" id="next-step" style="display:none;">
+        <span>▶</span><span><b>次の一歩：</b><span id="next-text"></span></span>
+      </div>
+
+      <div class="prop-foot">
+        <span class="pf-brand" id="pf-brand">大田AIワークス</span>
+        <span>業務を分解して、AIで一番効くところから。</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-solid" id="print-btn">サマリーを印刷 / PDF</button>
+      <button class="btn btn-line" id="save-btn">保存</button>
+      <button class="btn btn-ghost" id="reset-btn">リセット</button>
+    </div>
+  </section>
+</main>
+
+<p class="disclaimer">
+  ※ 削減時間・金額は、入力した頻度・所要時間・定型度からの概算です（定型度が高い作業ほどAI化で削れる割合を大きく見積もります）。商談での目安・きっかけ用。実際の効果・費用は個別に設計します。データはこの端末のブラウザにのみ保存されます。
+</p>
+
+<script>
+/* ============================================================
+   ロジック
+   ============================================================ */
+
+// 型商品マッピング（カテゴリ → 提案）
+const CATEGORIES = {
+  "集客":       { product: "集客コンテンツ運用", kind: "sub" },
+  "対応・予約": { product: "問い合わせ・予約AI", kind: "build" },
+  "書類・事務": { product: "丸ごと業務自動化",   kind: "spot" },
+  "その他":     { product: "AI活用の伴走サポート", kind: "advice" }
+};
+const CATEGORY_KEYS = Object.keys(CATEGORIES);
+
+// 頻度プリセット（表示ラベル → 月あたり回数）
+const FREQ = {
+  "毎日":       26,
+  "週に数回":   12,
+  "週1回":      4,
+  "月に数回":   2.5,
+  "月1回":      1
+};
+const FREQ_KEYS = Object.keys(FREQ);
+
+// 定型度 → AI化しやすさ係数 / 自動化(削減)率
+const ROUTINE = {
+  "高": { ease: 5.0, rate: 0.80, label: "高（毎回ほぼ同じ）" },
+  "中": { ease: 3.0, rate: 0.50, label: "中（だいたい同じ）" },
+  "低": { ease: 1.5, rate: 0.25, label: "低（毎回違う）" }
+};
+const ROUTINE_KEYS = Object.keys(ROUTINE);
+
+// 集客コンテンツ運用の価格ティア（カテゴリの削減時間/月で判定）
+function subTier(hours) {
+  if (hours < 8)  return { tier: "ライト",       price: "月 ¥30,000" };
+  if (hours < 20) return { tier: "スタンダード", price: "月 ¥50,000" };
+  return                 { tier: "フル",         price: "月 ¥80,000" };
+}
+function priceFor(catKey, hours) {
+  const kind = CATEGORIES[catKey].kind;
+  if (kind === "sub")   { const t = subTier(hours); return t.tier + "プラン ／ " + t.price; }
+  if (kind === "build") return "初期 ¥100,000〜300,000 ＋ 月 ¥10,000〜30,000";
+  if (kind === "spot")  return "¥300,000〜800,000（個別見積）";
+  return "月 ¥30,000〜（伴走）";
+}
+
+let tasks = [];
+let uid = 1;
+
+const el = (id) => document.getElementById(id);
+
+// ---- 計算 ----
+function monthlyHours(t) { return (FREQ[t.freq] || 0) * (Number(t.min) || 0) / 60; }
+function reduceHours(t)  { return monthlyHours(t) * (ROUTINE[t.routine] ? ROUTINE[t.routine].rate : 0); }
+function score(t)        { return (ROUTINE[t.routine] ? ROUTINE[t.routine].ease : 0) * monthlyHours(t); }
+
+function heatColor(ratio) {
+  // cool(petrol系) → ember(熱) へ補間
+  const c1 = [111,155,150], c2 = [196,86,31];
+  const r = Math.round(c1[0] + (c2[0]-c1[0])*ratio);
+  const g = Math.round(c1[1] + (c2[1]-c1[1])*ratio);
+  const b = Math.round(c1[2] + (c2[2]-c1[2])*ratio);
+  return `rgb(${r},${g},${b})`;
+}
+function fmt(n) { return Math.round(n).toLocaleString("ja-JP"); }
+function fmt1(n){ return (Math.round(n*10)/10).toLocaleString("ja-JP"); }
+
+// ---- 1行を生成 ----
+function buildRow(t) {
+  const row = document.createElement("div");
+  row.className = "task-row";
+  row.dataset.id = t.id;
+
+  // タスク名
+  const name = document.createElement("div");
+  name.className = "t-name";
+  name.innerHTML = `<input type="text" data-f="name" placeholder="例: インスタ投稿の文章を作る" />`;
+
+  // カテゴリ
+  const cat = document.createElement("select");
+  cat.dataset.f = "cat";
+  CATEGORY_KEYS.forEach(k => cat.add(new Option(k, k)));
+
+  // 頻度
+  const freq = document.createElement("select");
+  freq.dataset.f = "freq";
+  FREQ_KEYS.forEach(k => freq.add(new Option(k, k)));
+
+  // 1回あたり分
+  const minWrap = document.createElement("div");
+  minWrap.innerHTML = `<input type="number" data-f="min" min="0" step="5" placeholder="分" />`;
+
+  // 定型度
+  const rt = document.createElement("select");
+  rt.dataset.f = "routine";
+  ROUTINE_KEYS.forEach(k => rt.add(new Option(k, k)));
+
+  // 導出表示（月時間・ヒートバー）
+  const derived = document.createElement("div");
+  derived.className = "t-derived";
+  derived.innerHTML = `<span class="t-hours"><b class="d-h">0</b> h/月</span><span class="heat"><i class="d-bar"></i></span>`;
+
+  // 削除
+  const del = document.createElement("button");
+  del.className = "t-del"; del.title = "削除"; del.textContent = "×";
+  del.onclick = () => { tasks = tasks.filter(x => x.id !== t.id); row.remove(); renderResults(); save(); };
+
+  row.append(name, cat, freq, minWrap, rt, derived, del);
+
+  // 値を反映
+  name.querySelector("input").value = t.name;
+  cat.value = t.cat; freq.value = t.freq; rt.value = t.routine;
+  minWrap.querySelector("input").value = t.min;
+
+  // 入力で状態更新（行は再生成しない＝フォーカス維持）
+  row.querySelectorAll("[data-f]").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const f = inp.dataset.f;
+      t[f] = (f === "min") ? inp.value : inp.value;
+      recomputeRow(t, row);
+      renderResults();
+      save();
+    });
+  });
+
+  recomputeRow(t, row);
+  return row;
+}
+
+function recomputeRow(t, row) {
+  const h = monthlyHours(t);
+  row.querySelector(".d-h").textContent = fmt1(h);
+}
+
+// ---- 結果の描画 ----
+function renderResults() {
+  const valid = tasks.filter(t => t.name.trim() !== "" && monthlyHours(t) > 0);
+  const rate = Number(el("b-rate").value) || 0;
+
+  const totalH = valid.reduce((s,t)=> s + monthlyHours(t), 0);
+  const saveH  = valid.reduce((s,t)=> s + reduceHours(t), 0);
+  const saveY  = saveH * rate;
+
+  el("r-count").textContent = valid.length;
+  el("r-total").textContent = fmt1(totalH);
+  el("r-save-h").textContent = fmt1(saveH);
+  el("r-save-y").textContent = fmt(saveY);
+
+  // 行のヒートバー更新（全タスク対象・スコアで正規化）
+  const maxScore = Math.max(0.0001, ...tasks.map(score));
+  document.querySelectorAll(".task-row").forEach(row => {
+    const t = tasks.find(x => x.id == row.dataset.id);
+    if (!t) return;
+    const ratio = Math.min(1, score(t)/maxScore);
+    const bar = row.querySelector(".d-bar");
+    bar.style.width = (monthlyHours(t) > 0 ? Math.max(6, ratio*100) : 0) + "%";
+    bar.style.background = heatColor(ratio);
+  });
+
+  // ランキング
+  const ranked = [...valid].sort((a,b)=> score(b)-score(a));
+  const list = el("rank-list"); list.innerHTML = "";
+  el("rank-empty").style.display = ranked.length ? "none" : "block";
+  const maxR = ranked.length ? score(ranked[0]) : 1;
+  ranked.slice(0,6).forEach((t,i)=>{
+    const ratio = Math.min(1, score(t)/maxR);
+    const li = document.createElement("li");
+    if (i===0) li.className = "top1";
+    li.innerHTML = `
+      <span class="pos">${i+1}</span>
+      <span><span class="rname">${escapeHtml(t.name)}</span><br><span class="rcat">${t.cat}・${fmt1(monthlyHours(t))}h/月</span></span>
+      <span class="rbar"><span class="heat"><i style="width:${Math.max(8,ratio*100)}%;background:${heatColor(ratio)}"></i></span></span>`;
+    list.appendChild(li);
+  });
+
+  renderProposal(ranked, saveH, saveY, rate);
+}
+
+// ---- 提案（1枚サマリー） ----
+function renderProposal(ranked, saveH, saveY, rate) {
+  // 印刷用ヘッダ
+  el("p-client").textContent   = "お客様: " + (el("b-name").value || "—");
+  el("p-industry").textContent = "業種: " + (el("b-industry").value || "—");
+  el("p-date").textContent     = "診断日: " + (el("m-date").value || "—");
+  el("pf-brand").textContent   = el("m-staff").value || "AI活用パートナー";
+
+  const zone = el("offer-zone");
+  const nextStep = el("next-step");
+
+  if (!ranked.length) {
+    el("prop-line").innerHTML = "タスクを入力すると、ここに「現状 → AIで浮く時間・お金 → 最初の一手」が自動で出ます。";
+    zone.innerHTML = ""; nextStep.style.display = "none";
+    return;
+  }
+
+  const top = ranked[0];
+
+  // カテゴリ別に削減時間を集計 → 主役カテゴリ
+  const byCat = {};
+  ranked.forEach(t => { byCat[t.cat] = (byCat[t.cat]||0) + reduceHours(t); });
+  const catsSorted = Object.entries(byCat).sort((a,b)=> b[1]-a[1]);
+  const mainCat = catsSorted[0][0];
+  const mainHours = catsSorted[0][1];
+
+  // サマリー文
+  el("prop-line").innerHTML =
+    `現状、「<span class="hlp">${escapeHtml(top.name)}</span>」だけで月 <span class="hlp">${fmt1(monthlyHours(top))}時間</span>。` +
+    `棚卸し全体では月 <span class="hlp">${fmt1(ranked.reduce((s,t)=>s+monthlyHours(t),0))}時間</span> が定型作業に消えています。` +
+    `AI化すれば月 <span class="hl">約${fmt1(saveH)}時間（¥${fmt(saveY)}）</span> が浮く見込み。` +
+    `最初の一手は <span class="hl">${CATEGORIES[mainCat].product}</span> です。`;
+
+  // 提案カード（主役＋必要なら2番手）
+  zone.innerHTML = "";
+  zone.appendChild(offerCard(mainCat, mainHours, false));
+  const second = catsSorted[1];
+  if (second && second[1] > 0.5) zone.appendChild(offerCard(second[0], second[1], true));
+
+  // 次の一歩
+  el("next-text").textContent =
+    `優先度No.1の「${top.name}」をAI化する小さな仕組みを、まず1つ作って効果を体感する。`;
+  nextStep.style.display = "flex";
+}
+
+function offerCard(catKey, hours, isSecond) {
+  const d = document.createElement("div");
+  d.className = "offer" + (isSecond ? " second" : "");
+  d.innerHTML = `
+    <div>
+      <div class="o-label">${isSecond ? "あわせて検討" : "最初の一手"}</div>
+      <div class="o-name">${CATEGORIES[catKey].product}</div>
+    </div>
+    <div class="o-price">${priceFor(catKey, hours)}</div>`;
+  return d;
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+// ---- タスク追加 ----
+function addTask(seed) {
+  const t = Object.assign({ id: uid++, name:"", cat:"集客", freq:"週に数回", min:30, routine:"中" }, seed||{});
+  if (seed && seed.id) uid = Math.max(uid, seed.id+1);
+  tasks.push(t);
+  el("task-list").appendChild(buildRow(t));
+  renderResults();
+  save();
+}
+
+// ---- サンプル（飲食店）----
+const SAMPLE = [
+  { name:"インスタ・X の投稿文を考えて作る", cat:"集客",       freq:"週に数回", min:40, routine:"高" },
+  { name:"予約・問い合わせの電話/DM対応",     cat:"対応・予約", freq:"毎日",     min:35, routine:"高" },
+  { name:"クチコミへの返信",                   cat:"対応・予約", freq:"週に数回", min:20, routine:"中" },
+  { name:"日々の売上・在庫メモの集計",         cat:"書類・事務", freq:"毎日",     min:20, routine:"高" },
+  { name:"月末の経費まとめ",                   cat:"書類・事務", freq:"月1回",   min:180, routine:"中" },
+  { name:"新メニューの考案",                   cat:"その他",     freq:"月に数回", min:90, routine:"低" }
+];
+function loadSample() {
+  tasks = []; el("task-list").innerHTML = ""; uid = 1;
+  if (!el("b-industry").value) el("b-industry").value = "飲食店";
+  SAMPLE.forEach(s => addTask(s));
+}
+
+// ---- 保存 / 復元 ----
+const LS = "ai_shindan_v1";
+function snapshot() {
+  return {
+    basic: ["m-staff","m-date","b-name","b-industry","b-staff","b-rate","b-pain"].reduce((o,id)=>(o[id]=el(id).value, o),{}),
+    tasks
+  };
+}
+function save() { try { localStorage.setItem(LS, JSON.stringify(snapshot())); } catch(e){} }
+function load() {
+  let data; try { data = JSON.parse(localStorage.getItem(LS)); } catch(e){}
+  if (!data) return false;
+  if (data.basic) Object.entries(data.basic).forEach(([id,v])=>{ if(el(id)) el(id).value = v; });
+  tasks = []; el("task-list").innerHTML = "";
+  (data.tasks||[]).forEach(t => { tasks.push(t); uid = Math.max(uid, (t.id||0)+1); el("task-list").appendChild(buildRow(t)); });
+  return true;
+}
+
+// ---- 起動 ----
+function todayStr(){ const d = new Date(); return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`; }
+
+el("add-task").onclick = () => addTask();
+el("load-sample").onclick = loadSample;
+el("print-btn").onclick = () => window.print();
+el("save-btn").onclick = () => { save(); const b=el("save-btn"); const o=b.textContent; b.textContent="保存しました ✓"; setTimeout(()=>b.textContent=o,1400); };
+el("reset-btn").onclick = () => {
+  if (!confirm("入力をすべてクリアします。よろしいですか？")) return;
+  localStorage.removeItem(LS);
+  ["b-name","b-industry","b-staff","b-pain"].forEach(id=>el(id).value="");
+  el("b-rate").value = 2500;
+  tasks = []; el("task-list").innerHTML = ""; uid = 1;
+  addTask(); renderResults();
+};
+// 基本情報の変更も結果に反映
+["b-rate","b-name","b-industry","m-staff","m-date"].forEach(id => el(id).addEventListener("input", ()=>{ renderResults(); save(); }));
+["b-staff","b-pain"].forEach(id => el(id).addEventListener("input", save));
+
+(function init(){
+  el("m-date").value = todayStr();
+  const restored = load();
+  if (!restored || tasks.length === 0) addTask();
+  renderResults();
+})();
+</script>
+</body>
+</html>

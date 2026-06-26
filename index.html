@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>大田AIワークス｜大田区の中小の「面倒」をAIで消す</title>
+<link rel="icon" type="image/png" href="assets/logo.png" />
+<link rel="apple-touch-icon" href="assets/icon-180.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta name="theme-color" content="#0e5b5f" />
+<meta name="apple-mobile-web-app-title" content="大田AIワークス" />
+<meta name="description" content="大田区の中小・個人事業のためのAI活用パートナー。30分の無料診断で、どこをAI化すれば月何時間浮くかをその場で1枚に。" />
+<style>
+  /* ============================================================
+     大田AIワークス LP — 診断ツールと同一世界観（紙×ペトロール×ヒート×明朝見出し）
+     役割: 広告漏斗ではなく「30秒の信用づくり＋送れるURL＋無料診断への入口」
+     CTA飛び先(Googleフォーム)は末尾 FORM_URL の1か所で差し替え
+     ============================================================ */
+  :root{
+    --paper:#f4f0e7; --paper-2:#ebe5d6; --card:#fbf9f3;
+    --ink:#1c1f1b; --ink-soft:#555a51; --ink-faint:#8a8e83;
+    --line:#d9d2c1; --line-soft:#e7e1d3;
+    --petrol:#0e5b5f; --petrol-deep:#093e41; --petrol-tint:#dfeae8;
+    --ember:#c4561f; --ember-deep:#9c3f12; --cool:#6f9b96;
+    --shadow:0 1px 2px rgba(28,31,27,.06), 0 18px 40px -24px rgba(9,62,65,.55);
+    --font-serif:"Hiragino Mincho ProN","Yu Mincho","YuMincho","MS PMincho",serif;
+    --font-goth:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Meiryo",system-ui,sans-serif;
+    --font-mono:"SFMono-Regular","SF Mono","Menlo","Consolas",monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; font-family:var(--font-goth); color:var(--ink); background-color:var(--paper);
+    background-image:
+      radial-gradient(circle at 8% -8%, rgba(14,91,95,.10), transparent 40%),
+      radial-gradient(circle at 96% 2%, rgba(196,86,31,.09), transparent 36%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    line-height:1.7; -webkit-font-smoothing:antialiased; letter-spacing:.01em;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 20px;}
+  h2.sec{font-family:var(--font-serif); font-weight:600; font-size:clamp(20px,3.4vw,28px); letter-spacing:.04em; margin:0 0 6px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; color:var(--ember-deep); margin-bottom:8px;}
+
+  /* reveal */
+  .rv{opacity:0; transform:translateY(12px); animation:rv .7s cubic-bezier(.2,.8,.2,1) forwards;}
+  @keyframes rv{to{opacity:1; transform:none;}}
+  @media (prefers-reduced-motion:reduce){.rv{animation:none; opacity:1; transform:none;}}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky; top:0; z-index:20; backdrop-filter:saturate(1.2) blur(6px);
+      background:rgba(244,240,231,.82); border-bottom:1px solid var(--line);}
+  .nav-in{max-width:1080px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between;}
+  .word{display:flex; align-items:center; gap:10px; font-family:var(--font-serif); font-size:18px; font-weight:600; letter-spacing:.05em; color:var(--ink);}
+  .word .logo-img{width:34px; height:34px; object-fit:contain; mix-blend-mode:multiply; display:block;}
+  .foot-logo{width:24px; height:24px; object-fit:contain; mix-blend-mode:multiply; vertical-align:middle; margin-right:8px;}
+  .nav-cta{font-family:var(--font-goth); font-size:13px; text-decoration:none; background:var(--ember); color:#fff; padding:8px 16px; border-radius:3px; transition:background .15s, transform .08s;}
+  .nav-cta:hover{background:var(--ember-deep);}
+  .nav-cta:active{transform:translateY(1px);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(40px,7vw,84px) 0 clamp(34px,5vw,56px);}
+  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:clamp(24px,4vw,52px); align-items:center;}
+  @media (max-width:820px){.hero-grid{grid-template-columns:1fr; gap:28px;}}
+  .hero h1{font-family:var(--font-serif); font-weight:600; font-size:clamp(30px,5.6vw,52px); line-height:1.28; letter-spacing:.02em; margin:10px 0 16px;}
+  .hero h1 .em{color:var(--ember-deep); position:relative; white-space:nowrap;}
+  .hero h1 .em::after{content:""; position:absolute; left:0; right:0; bottom:.08em; height:.16em; background:rgba(196,86,31,.22);}
+  .hero p.lead{font-size:clamp(15px,1.8vw,17px); color:var(--ink-soft); margin:0 0 26px; max-width:30em;}
+  .cta-row{display:flex; flex-wrap:wrap; gap:12px; align-items:center;}
+  .btn-main{font-family:var(--font-goth); font-size:15px; text-decoration:none; background:var(--petrol); color:#fff; padding:14px 26px; border-radius:4px; box-shadow:0 10px 24px -12px var(--petrol); transition:background .15s, transform .08s; display:inline-flex; align-items:center; gap:8px;}
+  .btn-main:hover{background:var(--petrol-deep);}
+  .btn-main:active{transform:translateY(1px);}
+  .cta-note{font-size:12.5px; color:var(--ink-faint);}
+
+  /* hero preview card — 診断ツールのヒート表示を再現 */
+  .preview{background:var(--card); border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); padding:18px 18px 16px;}
+  .preview .pv-head{display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line-soft); padding-bottom:10px; margin-bottom:12px;}
+  .preview .pv-title{font-family:var(--font-serif); font-size:13px; letter-spacing:.08em; color:var(--petrol-deep);}
+  .preview .pv-tag{font-family:var(--font-mono); font-size:10px; color:var(--ember-deep); border:1px solid var(--ember); border-radius:2px; padding:1px 5px;}
+  .pv-row{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; padding:7px 0;}
+  .pv-row .pv-name{font-size:12.5px;}
+  .pv-row .pv-bar{width:96px; height:6px; border-radius:3px; background:var(--line-soft); overflow:hidden;}
+  .pv-row .pv-bar i{display:block; height:100%;}
+  .pv-foot{margin-top:12px; padding-top:12px; border-top:1px solid var(--line-soft); display:flex; align-items:baseline; justify-content:space-between;}
+  .pv-foot .k{font-size:11px; color:var(--ink-faint);}
+  .pv-foot .v{font-family:var(--font-mono); font-size:22px; font-weight:600; color:var(--ember-deep);}
+
+  /* ---------- sections ---------- */
+  section{padding:clamp(34px,5vw,58px) 0;}
+  .band{background:linear-gradient(180deg, rgba(251,249,243,.5), rgba(235,229,214,.5)); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);}
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px;}
+  @media (max-width:760px){.cards{grid-template-columns:1fr;}}
+  .c{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:20px; box-shadow:var(--shadow);}
+  .c .ic{font-family:var(--font-mono); font-size:11px; color:var(--ember-deep); letter-spacing:.1em;}
+  .c h3{font-family:var(--font-serif); font-size:17px; margin:8px 0 6px; font-weight:600;}
+  .c p{font-size:13.5px; color:var(--ink-soft); margin:0;}
+
+  /* やること（2型＋丸ごと） */
+  .offers{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px;}
+  @media (max-width:760px){.offers{grid-template-columns:1fr;}}
+  .o{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:22px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
+  .o::after{content:""; position:absolute; top:0; right:0; width:90px; height:90px; background:radial-gradient(circle at top right, rgba(14,91,95,.10), transparent 70%);}
+  .o .num{font-family:var(--font-mono); font-size:12px; color:var(--petrol); border:1px solid var(--petrol); border-radius:2px; padding:1px 6px;}
+  .o h3{font-family:var(--font-serif); font-size:19px; margin:10px 0 8px; font-weight:600;}
+  .o p{font-size:13.5px; color:var(--ink-soft); margin:0;}
+  .o.spot{background:transparent; border-style:dashed;}
+  .o.spot::after{background:radial-gradient(circle at top right, rgba(196,86,31,.10), transparent 70%);}
+
+  /* 進め方 steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:24px; counter-reset:s;}
+  @media (max-width:760px){.steps{grid-template-columns:1fr; gap:14px;}}
+  .step{position:relative; padding:0 18px;}
+  .step:not(:last-child){border-right:1px solid var(--line-soft);}
+  @media (max-width:760px){.step{border-right:none; border-left:2px solid var(--petrol-tint); padding:4px 0 4px 16px;}}
+  .step .n{font-family:var(--font-mono); font-size:13px; color:#fff; background:var(--petrol); width:26px; height:26px; border-radius:50%; display:grid; place-items:center; margin-bottom:10px;}
+  .step h4{font-family:var(--font-serif); font-size:16px; margin:0 0 6px; font-weight:600;}
+  .step p{font-size:13px; color:var(--ink-soft); margin:0;}
+
+  /* 信頼 */
+  .trust{display:flex; gap:20px; align-items:flex-start; background:var(--petrol-deep); color:#f4f0e7; border-radius:8px; padding:clamp(22px,3vw,34px); box-shadow:var(--shadow);}
+  .trust .qmark{font-family:var(--font-serif); font-size:46px; line-height:.8; color:var(--ember); flex:none;}
+  .trust p{margin:0; font-size:clamp(15px,1.8vw,18px); font-family:var(--font-serif); line-height:1.75;}
+  .trust small{color:#b8c6c4;}
+
+  /* 料金 */
+  .price{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px;}
+  @media (max-width:680px){.price{grid-template-columns:1fr;}}
+  .pcard{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:22px; text-align:center; box-shadow:var(--shadow);}
+  .pcard .pk{font-size:12px; color:var(--ink-faint); letter-spacing:.08em;}
+  .pcard .pv{font-family:var(--font-mono); font-size:30px; font-weight:600; color:var(--petrol-deep); margin:6px 0 2px;}
+  .pcard .pv small{font-size:14px; color:var(--ink-soft);}
+  .pcard .pd{font-size:12.5px; color:var(--ink-soft);}
+  .price-note{text-align:center; font-size:12.5px; color:var(--ink-faint); margin-top:14px;}
+
+  /* 事例 */
+  .case{margin-top:20px; background:var(--card); border:1px dashed var(--line); border-radius:6px; padding:22px; text-align:center;}
+  .case .badge{font-family:var(--font-mono); font-size:11px; color:var(--ember-deep); border:1px solid var(--ember); border-radius:2px; padding:2px 8px;}
+  .case p{font-size:13.5px; color:var(--ink-soft); margin:10px 0 0;}
+
+  /* 最終CTA */
+  .final{text-align:center; padding:clamp(44px,6vw,72px) 0;}
+  .final h2{font-family:var(--font-serif); font-size:clamp(24px,4vw,38px); font-weight:600; margin:0 0 12px; letter-spacing:.03em;}
+  .final p{color:var(--ink-soft); margin:0 auto 26px; max-width:30em;}
+
+  footer{border-top:2px solid var(--ink); padding:26px 0; }
+  .foot-in{max-width:1080px; margin:0 auto; padding:0 20px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;}
+  .foot-in .fb{font-family:var(--font-serif); font-size:16px; color:var(--petrol-deep); letter-spacing:.04em;}
+  .foot-in small{font-size:11.5px; color:var(--ink-faint);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="word">
+      <img class="logo-img" src="assets/logo.png" alt="大田AIワークス ロゴ" />
+      大田AIワークス
+    </div>
+    <a class="nav-cta cta" href="#">無料診断</a>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow rv">大田区の中小・個人事業のためのAI活用パートナー</div>
+      <h1 class="rv" style="animation-delay:.05s">その作業、<span class="em">AIに渡しませんか。</span></h1>
+      <p class="lead rv" style="animation-delay:.12s">SNS、問い合わせ対応、事務作業。30分の無料診断で「どこをAI化すれば月に何時間・いくら浮くか」を、その場で1枚にします。相談屋ではなく、作って渡して動かす地元のパートナーです。</p>
+      <div class="cta-row rv" style="animation-delay:.18s">
+        <a class="btn-main cta" href="#">無料でAI診断を受ける →</a>
+        <span class="cta-note">30分・その場で1枚・しつこい営業なし</span>
+      </div>
+    </div>
+
+    <!-- 診断プレビュー（製品の世界観をそのまま見せる） -->
+    <div class="preview rv" style="animation-delay:.24s" aria-hidden="true">
+      <div class="pv-head"><span class="pv-title">AI活用診断</span><span class="pv-tag">PRIORITY</span></div>
+      <div class="pv-row"><span class="pv-name">予約・問い合わせ対応</span><span class="pv-bar"><i style="width:100%;background:#c4561f"></i></span></div>
+      <div class="pv-row"><span class="pv-name">SNSの投稿づくり</span><span class="pv-bar"><i style="width:74%;background:#cf7a3f"></i></span></div>
+      <div class="pv-row"><span class="pv-name">売上・在庫のメモ集計</span><span class="pv-bar"><i style="width:52%;background:#8a9a6f"></i></span></div>
+      <div class="pv-row"><span class="pv-name">月末の経費まとめ</span><span class="pv-bar"><i style="width:33%;background:#6f9b96"></i></span></div>
+      <div class="pv-foot"><span class="k">AIで削れる見込み</span><span class="v">約29.9<span style="font-size:13px;color:var(--ink-soft)"> 時間/月</span></span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 悩み ===== -->
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow rv">こんなこと、ありませんか</div>
+    <h2 class="sec rv">「人手が足りない」の正体は、たいてい"繰り返しの作業"</h2>
+    <div class="cards">
+      <div class="c rv"><div class="ic">01</div><h3>SNSに手が回らない</h3><p>投稿を考える時間がなく、集客が後回しになっている。気づけば何週間も更新が止まっている。</p></div>
+      <div class="c rv" style="animation-delay:.08s"><div class="ic">02</div><h3>問い合わせ対応に追われる</h3><p>同じ質問への返信、予約の電話やDM。営業中も手が止まり、取りこぼしも出ている。</p></div>
+      <div class="c rv" style="animation-delay:.16s"><div class="ic">03</div><h3>事務作業で時間が溶ける</h3><p>見積・請求・日報・経費。本業ではないのに、毎月まとまった時間を持っていかれる。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== やること ===== -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">やること</div>
+    <h2 class="sec rv">同じ「型」を、あなたの業種に当てる</h2>
+    <p class="rv" style="color:var(--ink-soft); max-width:34em; margin-top:4px;">AIは魔法ではなく、面倒な作業を消す道具です。まずは効く2つから。</p>
+    <div class="offers">
+      <div class="o rv"><span class="num">型1</span><h3>集客コンテンツ運用</h3><p>SNS・ブログ・Googleビジネス・チラシを、AIで量産して運用。あなたは確認するだけ。更新が止まらない仕組みに。</p></div>
+      <div class="o rv" style="animation-delay:.08s"><span class="num">型2</span><h3>問い合わせ・予約AI</h3><p>LINEやwebで、よくある質問と予約案内を自動で一次対応。取りこぼしを減らし、現場の手を空ける。</p></div>
+    </div>
+    <div class="offers" style="margin-top:16px;">
+      <div class="o spot rv"><span class="num" style="color:var(--ember-deep);border-color:var(--ember)">＋</span><h3>丸ごと業務自動化</h3><p>見積・請求・議事録など、その会社だけの面倒を個別に自動化（年数件の特別枠）。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== できること6つ ===== -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">できること</div>
+    <h2 class="sec rv">例えば、こんなことができます</h2>
+    <div class="cards" style="margin-top:22px;">
+      <div class="c rv"><div class="ic">集客</div><h3>SNS投稿をまとめて生成</h3><p>写真とひと言を渡すだけで、1ヶ月分の投稿文とハッシュタグを一括で。更新が止まらない。</p></div>
+      <div class="c rv" style="animation-delay:.06s"><div class="ic">効率化</div><h3>紙のフォームを電子化</h3><p>手書きの申込書・顧客情報をデジタル入力に。転記ミスが減り、データで検索・管理できる。</p></div>
+      <div class="c rv" style="animation-delay:.12s"><div class="ic">対応</div><h3>クチコミ返信の下書き</h3><p>評価に合わせた感じのいい返信を秒で用意。あなたは確認して送るだけ。</p></div>
+      <div class="c rv" style="animation-delay:.18s"><div class="ic">書類</div><h3>見積・請求・報告書の自動作成</h3><p>条件を入れるだけで体裁の整った書類が出る。手打ちの時間をまるごと削減。</p></div>
+      <div class="c rv" style="animation-delay:.24s"><div class="ic">書類</div><h3>打ち合わせの議事録を自動で</h3><p>録音から要点・決定事項・次のToDoを自動でまとめる。会議のあとが楽に。</p></div>
+      <div class="c rv" style="animation-delay:.30s"><div class="ic">販促</div><h3>チラシ・POP・メニューの文章</h3><p>季節やキャンペーンに合わせた販促の文章とデザイン案をすぐ形に。</p></div>
+    </div>
+    <p class="rv" style="text-align:center;color:var(--ink-faint);font-size:12.5px;margin-top:16px;">ここにないことも、まず無料診断で「あなたの業種で何が効くか」を一緒に見つけます。</p>
+  </div>
+</section>
+
+<!-- ===== 進め方 ===== -->
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow rv">進め方</div>
+    <h2 class="sec rv">小さく試して、効いたら続ける</h2>
+    <div class="steps">
+      <div class="step rv"><div class="n">1</div><h4>無料診断（30分）</h4><p>今の作業を分解して、どこをAI化すると何時間浮くかを1枚に。</p></div>
+      <div class="step rv" style="animation-delay:.08s"><div class="n">2</div><h4>小さく作る</h4><p>一番効く1つから、使える仕組みを作って渡す。まず効果を体感。</p></div>
+      <div class="step rv" style="animation-delay:.16s"><div class="n">3</div><h4>月額で運用・改善</h4><p>毎月まわして、数字を見ながら改善。無理なら止められる。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 信頼 ===== -->
+<section>
+  <div class="wrap">
+    <div class="trust rv">
+      <span class="qmark">”</span>
+      <p>全国のAIベンダーではなく、<b>大田区で顔が見える地元のパートナー</b>。色々な業種の現場を知っているから、机上の正論ではなく「あなたの店・事務所で本当に効くこと」から作ります。<br><small>相談だけで終わらせない。作って、渡して、動かすところまで。</small></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 料金 ===== -->
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow rv">料金の入口</div>
+    <h2 class="sec rv">まずは無料診断から</h2>
+    <div class="price">
+      <div class="pcard rv"><div class="pk">AI活用診断</div><div class="pv">無料</div><div class="pd">30分・その場で1枚・しつこい営業なし</div></div>
+      <div class="pcard rv" style="animation-delay:.08s"><div class="pk">運用（中核）</div><div class="pv">月 ¥30,000<small> 〜</small></div><div class="pd">集客コンテンツ運用／問い合わせ・予約AI</div></div>
+    </div>
+    <p class="price-note rv">問い合わせ・予約AIの構築や丸ごと自動化は内容に応じて個別見積。まずは診断で「効くか」を見てから。</p>
+  </div>
+</section>
+
+<!-- ===== 事例 ===== -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow rv">導入事例</div>
+    <h2 class="sec rv">いま、モニターを募集中です</h2>
+    <div class="case rv">
+      <span class="badge">先着3社・モニター価格</span>
+      <p>最初の導入事例づくりとして、中核プランをモニター価格でご案内中。効果が出たら正規価格で継続、合わなければ止められます。気になる方はお早めに。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 最終CTA ===== -->
+<section class="final band">
+  <div class="wrap">
+    <h2 class="rv">その面倒、30分で「どれだけ楽になるか」見てみませんか。</h2>
+    <p class="rv" style="animation-delay:.06s">無料のAI活用診断。その場で1枚にしてお渡しします。</p>
+    <div class="rv" style="animation-delay:.12s"><a class="btn-main cta" href="#">無料でAI診断を受ける →</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <span class="fb"><img class="foot-logo" src="assets/logo.png" alt="" />大田AIワークス</span>
+    <small>大田区の中小・個人事業のためのAI活用パートナー</small>
+  </div>
+</footer>
+
+<script>
+  // === CTAの飛び先（Googleフォーム）===
+  // ↓ ここにGoogleフォームのURLを貼ると、全部の「無料診断」ボタンに反映されます
+  const FORM_URL = "https://forms.gle/REPLACE_ME";
+  document.querySelectorAll("a.cta").forEach(a => {
+    a.setAttribute("href", FORM_URL);
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "noopener");
+  });
+</script>
+</body>
+</html>
