@@ -105,6 +105,19 @@
   .o.spot{background:transparent; border-style:dashed;}
   .o.spot::after{background:radial-gradient(circle at top right, rgba(196,86,31,.10), transparent 70%);}
 
+  /* 他のAI研修との違い */
+  .vs-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px;}
+  @media (max-width:760px){.vs-grid{grid-template-columns:1fr;}}
+  .vs{border-radius:6px; padding:24px; box-shadow:var(--shadow);}
+  .vs-label{font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; margin-bottom:12px;}
+  .vs p{font-size:14px; line-height:1.85; margin:0;}
+  .vs-bad{background:var(--paper-2); border:1px dashed var(--line);}
+  .vs-bad .vs-label{color:var(--ink-faint);}
+  .vs-bad p{color:var(--ink-soft);}
+  .vs-good{background:var(--petrol-deep); border:1px solid var(--petrol-deep);}
+  .vs-good .vs-label{color:var(--cool);}
+  .vs-good p{color:#f4f0e7;}
+
   /* 進め方 steps */
   .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:24px; counter-reset:s;}
   @media (max-width:760px){.steps{grid-template-columns:1fr; gap:14px;}}
@@ -185,9 +198,9 @@
     <div class="eyebrow rv">こんなこと、ありませんか</div>
     <h2 class="sec rv">「人手が足りない」の正体は、たいてい"繰り返しの作業"</h2>
     <div class="cards">
-      <div class="c rv"><div class="ic">01</div><h3>SNSに手が回らない</h3><p>投稿を考える時間がなく、集客が後回しになっている。気づけば何週間も更新が止まっている。</p></div>
-      <div class="c rv" style="animation-delay:.08s"><div class="ic">02</div><h3>問い合わせ対応に追われる</h3><p>同じ質問への返信、予約の電話やDM。営業中も手が止まり、取りこぼしも出ている。</p></div>
-      <div class="c rv" style="animation-delay:.16s"><div class="ic">03</div><h3>事務作業で時間が溶ける</h3><p>見積・請求・日報・経費。本業ではないのに、毎月まとまった時間を持っていかれる。</p></div>
+      <div class="c rv"><div class="ic">01</div><h3>資料作りに時間がかかる</h3><p>会議や報告のたびに、資料をゼロから作っている。同じような作業なのに、毎回まとまった時間がかかる。</p></div>
+      <div class="c rv" style="animation-delay:.08s"><div class="ic">02</div><h3>経費・請求書の処理が面倒</h3><p>レシートの整理や請求書の確認。本業ではないのに、月末にまとまった時間を持っていかれる。</p></div>
+      <div class="c rv" style="animation-delay:.16s"><div class="ic">03</div><h3>議事録やマニュアルが後回し</h3><p>会議のあとの整理、新人への説明。大事だと分かっていても、手が回らず溜まっていく。</p></div>
     </div>
   </div>
 </section>
@@ -205,20 +218,38 @@
   </div>
 </section>
 
+<!-- ===== 他のAI研修との違い ===== -->
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow rv">他のAI研修との違い</div>
+    <h2 class="sec rv">「AIってすごい」で、終わらせない</h2>
+    <div class="vs-grid">
+      <div class="vs vs-bad rv">
+        <div class="vs-label">よくあるAI研修</div>
+        <p>AIや生成AIツールの使い方を、一般論として学ぶ。「AIってすごい」ことは分かる。でも自分の仕事にどう使うかは、結局わからないまま終わる。</p>
+      </div>
+      <div class="vs vs-good rv" style="animation-delay:.08s">
+        <div class="vs-label">大田AIワークスの研修</div>
+        <p>AIの基礎は軽く触れる程度。中心は、あなたの実際の業務を棚卸しして、その場でAI化すること。研修が終わるころには、自分の仕事が実際に楽になっている。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== できること6つ ===== -->
 <section>
   <div class="wrap">
     <div class="eyebrow rv">できること</div>
     <h2 class="sec rv">例えば、こんなことができます</h2>
     <div class="cards" style="margin-top:22px;">
-      <div class="c rv"><div class="ic">集客</div><h3>SNS投稿をまとめて生成</h3><p>写真とひと言を渡すだけで、1ヶ月分の投稿文とハッシュタグを一括で。更新が止まらない。</p></div>
-      <div class="c rv" style="animation-delay:.06s"><div class="ic">効率化</div><h3>紙のフォームを電子化</h3><p>手書きの申込書・顧客情報をデジタル入力に。転記ミスが減り、データで検索・管理できる。</p></div>
-      <div class="c rv" style="animation-delay:.12s"><div class="ic">対応</div><h3>クチコミ返信の下書き</h3><p>評価に合わせた感じのいい返信を秒で用意。あなたは確認して送るだけ。</p></div>
-      <div class="c rv" style="animation-delay:.18s"><div class="ic">書類</div><h3>見積・請求・報告書の自動作成</h3><p>条件を入れるだけで体裁の整った書類が出る。手打ちの時間をまるごと削減。</p></div>
-      <div class="c rv" style="animation-delay:.24s"><div class="ic">書類</div><h3>打ち合わせの議事録を自動で</h3><p>録音から要点・決定事項・次のToDoを自動でまとめる。会議のあとが楽に。</p></div>
-      <div class="c rv" style="animation-delay:.30s"><div class="ic">販促</div><h3>チラシ・POP・メニューの文章</h3><p>季節やキャンペーンに合わせた販促の文章とデザイン案をすぐ形に。</p></div>
+      <div class="c rv"><div class="ic">資料</div><h3>会議・報告資料のたたき台作成</h3><p>現状・課題・改善策など、伝えたい構成を伝えるだけで、資料の骨子ができる。</p></div>
+      <div class="c rv" style="animation-delay:.06s"><div class="ic">資料</div><h3>長い資料の要約</h3><p>何十ページの資料でも、知っておくべきことだけを短時間で整理できる。</p></div>
+      <div class="c rv" style="animation-delay:.12s"><div class="ic">経費</div><h3>レシート・経費の整理</h3><p>日付・金額・勘定科目の候補まで表にできる。最終確認と入力は人が行う。</p></div>
+      <div class="c rv" style="animation-delay:.18s"><div class="ic">書類</div><h3>請求書の整理</h3><p>支払期限が近い順に並べるなど、複数の請求書もまとめて確認できる。</p></div>
+      <div class="c rv" style="animation-delay:.24s"><div class="ic">会議</div><h3>議事録の整理</h3><p>決定事項・担当者・期限に整理。会議のあとの作業が楽になる。</p></div>
+      <div class="c rv" style="animation-delay:.30s"><div class="ic">教育</div><h3>マニュアルのたたき台作成</h3><p>初めての人でも分かるように、チェックリスト形式などで整理できる。</p></div>
     </div>
-    <p class="rv" style="text-align:center;color:var(--ink-faint);font-size:12.5px;margin-top:16px;">ここにないことも、まず無料診断で「あなたの業種で何が効くか」を一緒に見つけます。</p>
+    <p class="rv" style="text-align:center;color:var(--ink-faint);font-size:12.5px;margin-top:16px;">研修では、ここにないことも一緒に棚卸しして、その場で試します。</p>
   </div>
 </section>
 
@@ -226,11 +257,11 @@
 <section class="band">
   <div class="wrap">
     <div class="eyebrow rv">進め方</div>
-    <h2 class="sec rv">小さく試して、効いたら続ける</h2>
+    <h2 class="sec rv">まず知って、その場で試す</h2>
     <div class="steps">
       <div class="step rv"><div class="n">1</div><h4>無料診断（30分）</h4><p>今の作業を分解して、どこをAI化すると何時間浮くかを1枚に。</p></div>
-      <div class="step rv" style="animation-delay:.08s"><div class="n">2</div><h4>小さく作る</h4><p>一番効く1つから、使える仕組みを作って渡す。まず効果を体感。</p></div>
-      <div class="step rv" style="animation-delay:.16s"><div class="n">3</div><h4>月額で運用・改善</h4><p>毎月まわして、数字を見ながら改善。無理なら止められる。</p></div>
+      <div class="step rv" style="animation-delay:.08s"><div class="n">2</div><h4>研修でその場にAI化</h4><p>一番効くところから棚卸しして、実際にAIで試す。使える形にして持ち帰れる。</p></div>
+      <div class="step rv" style="animation-delay:.16s"><div class="n">3</div><h4>必要なら伴走サポート</h4><p>研修後30日間、困ったらいつでも相談できるプランも選べる。</p></div>
     </div>
   </div>
 </section>
