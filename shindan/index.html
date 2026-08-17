@@ -446,7 +446,7 @@
 const CATEGORIES = {
   "集客":       { product: "集客コンテンツ運用", kind: "sub" },
   "対応・予約": { product: "問い合わせ・予約AI", kind: "build" },
-  "書類・事務": { product: "丸ごと業務自動化",   kind: "spot" },
+  "書類・事務": { product: "AI業務改善研修",     kind: "training" },
   "その他":     { product: "AI活用の伴走サポート", kind: "advice" }
 };
 const CATEGORY_KEYS = Object.keys(CATEGORIES);
@@ -479,7 +479,7 @@ function priceFor(catKey, hours) {
   const kind = CATEGORIES[catKey].kind;
   if (kind === "sub")   { const t = subTier(hours); return t.tier + "プラン ／ " + t.price; }
   if (kind === "build") return "初期 ¥100,000〜300,000 ＋ 月 ¥10,000〜30,000";
-  if (kind === "spot")  return "¥300,000〜800,000（個別見積）";
+  if (kind === "training") return "¥30,000〜50,000（研修のみ30,000／30日サポート込みで50,000）";
   return "月 ¥30,000〜（伴走）";
 }
 

@@ -97,6 +97,9 @@
   /* やること（2型＋丸ごと） */
   .offers{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px;}
   @media (max-width:760px){.offers{grid-template-columns:1fr;}}
+  .offers.three{grid-template-columns:repeat(3,1fr);}
+  @media (max-width:900px){.offers.three{grid-template-columns:1fr 1fr;}}
+  @media (max-width:760px){.offers.three{grid-template-columns:1fr;}}
   .o{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:22px; box-shadow:var(--shadow); position:relative; overflow:hidden;}
   .o::after{content:""; position:absolute; top:0; right:0; width:90px; height:90px; background:radial-gradient(circle at top right, rgba(14,91,95,.10), transparent 70%);}
   .o .num{font-family:var(--font-mono); font-size:12px; color:var(--petrol); border:1px solid var(--petrol); border-radius:2px; padding:1px 6px;}
@@ -130,11 +133,6 @@
   .pcard .pv small{font-size:14px; color:var(--ink-soft);}
   .pcard .pd{font-size:12.5px; color:var(--ink-soft);}
   .price-note{text-align:center; font-size:12.5px; color:var(--ink-faint); margin-top:14px;}
-
-  /* 事例 */
-  .case{margin-top:20px; background:var(--card); border:1px dashed var(--line); border-radius:6px; padding:22px; text-align:center;}
-  .case .badge{font-family:var(--font-mono); font-size:11px; color:var(--ember-deep); border:1px solid var(--ember); border-radius:2px; padding:2px 8px;}
-  .case p{font-size:13.5px; color:var(--ink-soft); margin:10px 0 0;}
 
   /* 最終CTA */
   .final{text-align:center; padding:clamp(44px,6vw,72px) 0;}
@@ -203,12 +201,13 @@
     <div class="eyebrow rv">やること</div>
     <h2 class="sec rv">同じ「型」を、あなたの業種に当てる</h2>
     <p class="rv" style="color:var(--ink-soft); max-width:34em; margin-top:4px;">AIは魔法ではなく、面倒な作業を消す道具です。まずは効く2つから。</p>
-    <div class="offers">
+    <div class="offers three">
       <div class="o rv"><span class="num">型1</span><h3>集客コンテンツ運用</h3><p>SNS・ブログ・Googleビジネス・チラシを、AIで量産して運用。あなたは確認するだけ。更新が止まらない仕組みに。</p></div>
       <div class="o rv" style="animation-delay:.08s"><span class="num">型2</span><h3>問い合わせ・予約AI</h3><p>LINEやwebで、よくある質問と予約案内を自動で一次対応。取りこぼしを減らし、現場の手を空ける。</p></div>
+      <div class="o rv" style="animation-delay:.16s"><span class="num">型3</span><h3>AI業務改善研修</h3><p>資料作成・経費・議事録など、書類まわりの面倒を棚卸しして、その場でAI化する研修。業種を問わず対応。</p></div>
     </div>
     <div class="offers" style="margin-top:16px;">
-      <div class="o spot rv"><span class="num" style="color:var(--ember-deep);border-color:var(--ember)">＋</span><h3>丸ごと業務自動化</h3><p>見積・請求・議事録など、その会社だけの面倒を個別に自動化（年数件の特別枠）。</p></div>
+      <div class="o spot rv"><span class="num" style="color:var(--ember-deep);border-color:var(--ember)">＋</span><h3>丸ごと業務自動化</h3><p>研修後、本格的にフル自動化したい会社向けの個別見積（年数件の特別枠）。</p></div>
     </div>
   </div>
 </section>
@@ -260,21 +259,11 @@
     <h2 class="sec rv">まずは無料診断から</h2>
     <div class="price">
       <div class="pcard rv"><div class="pk">AI活用診断</div><div class="pv">無料</div><div class="pd">30分・その場で1枚・しつこい営業なし</div></div>
-      <div class="pcard rv" style="animation-delay:.08s"><div class="pk">運用（中核）</div><div class="pv">月 ¥30,000<small> 〜</small></div><div class="pd">集客コンテンツ運用／問い合わせ・予約AI</div></div>
+      <div class="pcard rv" style="animation-delay:.06s"><div class="pk">集客コンテンツ運用</div><div class="pv">月 ¥30,000<small> 〜</small></div><div class="pd">SNS・ブログ・Googleビジネスを量産・運用</div></div>
+      <div class="pcard rv" style="animation-delay:.12s"><div class="pk">問い合わせ・予約AI</div><div class="pv">初期 ¥100,000<small> 〜</small></div><div class="pd">＋月額保守 ¥10,000〜／LINE・webの一次対応</div></div>
+      <div class="pcard rv" style="animation-delay:.18s"><div class="pk">AI業務改善研修</div><div class="pv">¥30,000<small> 〜</small></div><div class="pd">書類・事務の面倒を、その場でAI化する研修</div></div>
     </div>
-    <p class="price-note rv">問い合わせ・予約AIの構築や丸ごと自動化は内容に応じて個別見積。まずは診断で「効くか」を見てから。</p>
-  </div>
-</section>
-
-<!-- ===== 事例 ===== -->
-<section>
-  <div class="wrap">
-    <div class="eyebrow rv">導入事例</div>
-    <h2 class="sec rv">いま、モニターを募集中です</h2>
-    <div class="case rv">
-      <span class="badge">先着3社・モニター価格</span>
-      <p>最初の導入事例づくりとして、中核プランをモニター価格でご案内中。効果が出たら正規価格で継続、合わなければ止められます。気になる方はお早めに。</p>
-    </div>
+    <p class="price-note rv">丸ごと業務自動化は研修後、内容に応じて個別見積。まずは無料診断で「何が効くか」を見てから。</p>
   </div>
 </section>
 
